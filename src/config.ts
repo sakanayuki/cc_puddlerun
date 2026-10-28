@@ -50,6 +50,8 @@ export const PUDDLE = {
 
 export const SPRITE = {
   runFps: 12,
+  /** 走りループに使うコマ(シートの1コマ目は立ち姿なので外す) */
+  runFrames: [1, 2, 3, 4, 5, 6, 7],
   cryFps: 9,
   /** 泣きアニメ後、リザルトへ移るまでの余韻(秒) */
   cryHold: 0.5,

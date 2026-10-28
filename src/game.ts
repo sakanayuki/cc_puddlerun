@@ -357,6 +357,7 @@ export class Game {
       // 8..15 がジャンプ(踏切→上昇→頂点→下降→着地)
       return { sheet, frame: 8 + Math.min(7, Math.floor((this.jumpT / JUMP.duration) * 8)) };
     }
-    return { sheet, frame: Math.floor(this.runClock * SPRITE.runFps) % 8 };
+    const run = SPRITE.runFrames;
+    return { sheet, frame: run[Math.floor(this.runClock * SPRITE.runFps) % run.length] };
   }
 }
