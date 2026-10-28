@@ -1,0 +1,17 @@
+{
+  "name": "cc-puddlerun",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "assets": "python3 scripts/process_assets.py"
+  },
+  "devDependencies": {
+    "@fontsource/mochiy-pop-one": "^5.3.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.5"
+  }
+}

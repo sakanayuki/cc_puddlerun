@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#54b3f4" />
+    <title>泥んこランナー</title>
+    <meta name="description" content="水たまりを避けて、どこまで走れるか。タップだけで遊べるランニングゲーム。" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ctext y='52' font-size='52'%3E%F0%9F%8F%83%3C/text%3E%3C/svg%3E" />
+  </head>
+  <body>
+    <canvas id="stage"></canvas>
+
+    <div id="loading" class="screen show"><p>よみこみ中…</p></div>
+
+    <section id="title" class="screen">
+      <h1 class="logo"><span class="l1">泥んこ</span><span class="l2">ランナー</span></h1>
+      <p class="best">ベスト <b id="title-best">0</b> m</p>
+      <p class="tap blink">タップでスタート</p>
+    </section>
+
+    <section id="hud" class="screen">
+      <div class="meter"><b id="hud-meter">0</b><small>m</small></div>
+      <div class="lives" id="hud-lives" aria-label="のこりライフ"></div>
+    </section>
+
+    <section id="result" class="screen">
+      <div class="panel">
+        <p class="oops">ドロドロ…!</p>
+        <p class="label">今回の記録</p>
+        <p class="score"><b id="result-score">0</b><small>m</small></p>
+        <p class="newrecord" id="result-new">NEW RECORD!</p>
+        <p class="label">ベスト記録 <b id="result-best">0</b> m</p>
+      </div>
+      <p class="tap blink" id="result-tap">タップでもう一度</p>
+    </section>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
