@@ -307,10 +307,12 @@ export class Game {
   private drawActors(): void {
     const playerX = this.playerX();
     const screenX = (p: Puddle) => playerX + p.x - this.dist;
-    for (const p of this.puddles) if (p.hitAge < 0) this.drawPuddle(p, screenX(p));
+    // 泣いているときはキャラを水たまりより手前に出す
+    const crying = this.mode === "dying" || this.mode === "result";
+    for (const p of this.puddles) if (crying || p.hitAge < 0) this.drawPuddle(p, screenX(p));
     this.drawPlayer(playerX);
-    // 被弾した水たまりのしぶきは手前に出す
-    for (const p of this.puddles) if (p.hitAge >= 0) this.drawPuddle(p, screenX(p));
+    // 通常時は被弾した水たまりのしぶきを手前に出す
+    if (!crying) for (const p of this.puddles) if (p.hitAge >= 0) this.drawPuddle(p, screenX(p));
   }
 
   private drawPuddle(p: Puddle, x: number): void {
