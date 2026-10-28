@@ -10,6 +10,7 @@ import {
   MAX_RENDER_SCALE,
   MAX_HITS,
   PLAYER,
+  PORTRAIT_TIME_SCALE,
   PUDDLE,
   PUDDLE_BASE_Y,
   SPEED,
@@ -102,7 +103,7 @@ export class Game {
   }
 
   frame(dtRaw: number): void {
-    const dt = Math.max(0, Math.min(dtRaw, 1 / 20));
+    const dt = Math.max(0, Math.min(dtRaw, 1 / 20)) * (this.portrait() ? PORTRAIT_TIME_SCALE : 1);
     this.clock += dt;
     this.update(dt);
     this.render();

@@ -16,6 +16,11 @@ export const PUDDLE_BASE_Y = 718;
 /** 走行速度(ワールド単位/秒)。難易度は水たまりの密度だけで上げる */
 export const SPEED = 560;
 export const UNITS_PER_METER = 50;
+/**
+ * 縦長画面は見える範囲が狭く先読みが短いので、ゲーム内の時間を遅くする。
+ * 速度だけを下げるとジャンプの飛距離が縮んで越えられない配置が出るため、時間全体を等倍で遅くする
+ */
+export const PORTRAIT_TIME_SCALE = 0.75;
 
 export const MAX_HITS = 4;
 /** 被弾後の無敵時間(秒)。最短の水たまり間隔(GAP_FLOOR)より短くしておく */
