@@ -85,6 +85,8 @@ body {
   font-size: clamp(48px, min(17vw, 16vh), 128px);
   transform: rotate(-4deg);
   animation: bob 2.4s ease-in-out infinite;
+  /* 文字のふち取りを毎フレーム再描画させないよう、専用レイヤーに載せる */
+  will-change: transform;
 }
 
 .logo .l1 {
@@ -119,6 +121,7 @@ body {
 
 .blink {
   animation: blink 1.1s ease-in-out infinite;
+  will-change: opacity;
 }
 
 @keyframes blink {
@@ -176,7 +179,6 @@ body {
 .drop.lost {
   transform: scale(0.6);
   opacity: 0.25;
-  filter: grayscale(1);
 }
 
 /* ---- リザルト ---- */
@@ -219,6 +221,7 @@ body {
   font-size: clamp(24px, 6.5vmin, 44px);
   color: #ff7a2f;
   animation: pop 0.7s ease-in-out infinite alternate;
+  will-change: transform;
 }
 
 .newrecord.on {

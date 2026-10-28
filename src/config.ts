@@ -5,6 +5,9 @@ export const BG_STRIP_W = 1280;
 export const BG_H = 768;
 export const BG_COUNT = 3;
 
+/** 内部描画解像度の上限(ワールド単位あたりのピクセル数)。素材の解像度に合わせている */
+export const MAX_RENDER_SCALE = 1.1;
+
 /** 足元の高さ(道路の上) */
 export const GROUND_Y = 700;
 /** 水たまり本体の下端(足元より少し手前の路面) */

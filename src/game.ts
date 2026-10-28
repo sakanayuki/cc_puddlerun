@@ -7,6 +7,7 @@ import {
   GROUND_Y,
   INVINCIBLE_SEC,
   JUMP,
+  MAX_RENDER_SCALE,
   MAX_HITS,
   PLAYER,
   PUDDLE,
@@ -60,7 +61,7 @@ export class Game {
     private canvas: HTMLCanvasElement,
     private assets: Assets,
   ) {
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d", { alpha: false });
     if (!ctx) throw new Error("Canvas 2D が使えません");
     this.ctx = ctx;
     this.resize();
@@ -214,21 +215,20 @@ export class Game {
   }
 
   private resize(): void {
-    const dpr = Math.min(window.devicePixelRatio || 1, 3);
     this.cssW = window.innerWidth;
     this.cssH = window.innerHeight;
-    this.canvas.width = Math.round(this.cssW * dpr);
-    this.canvas.height = Math.round(this.cssH * dpr);
-    // 縦長・横長とも背景の高さに合わせる(横は画面幅に応じて見える範囲が変わる)
+    // 背景の高さに合わせる(縦長・横長とも。横は画面幅に応じて見える範囲が変わる)
     this.scale = this.cssH / BG_H;
     this.visW = this.cssW / this.scale;
-    const k = dpr * this.scale;
+    // 素材は 1 ワールド単位 ≒ 1px なので、それ以上の内部解像度は描画コストが増えるだけ。
+    // CSS で引き伸ばして表示する
+    const k = Math.min(window.devicePixelRatio * this.scale, MAX_RENDER_SCALE);
+    this.canvas.width = Math.round(this.visW * k);
+    this.canvas.height = Math.round(BG_H * k);
     this.ctx.setTransform(k, 0, 0, k, 0, 0);
-    this.ctx.imageSmoothingQuality = "high";
   }
 
   private render(): void {
-    this.ctx.clearRect(0, 0, this.visW, BG_H);
     this.drawBackground();
     this.drawActors();
   }
