@@ -4,12 +4,6 @@
 export const BG_STRIP_W = 1280;
 export const BG_H = 768;
 export const BG_COUNT = 3;
-/** 画面上端の空色(背景画像の上端と同色)。縦長画面で上を延長するのに使う */
-export const SKY_COLOR = "#54b3f4";
-export const SKY_COLOR_TOP = "#3a97e6";
-
-/** 縦長画面で横方向に見せるワールド幅 */
-export const PORTRAIT_VIEW_W = 720;
 
 /** 足元の高さ(道路の上) */
 export const GROUND_Y = 700;

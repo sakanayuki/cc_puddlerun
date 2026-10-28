@@ -9,11 +9,8 @@ import {
   JUMP,
   MAX_HITS,
   PLAYER,
-  PORTRAIT_VIEW_W,
   PUDDLE,
   PUDDLE_BASE_Y,
-  SKY_COLOR,
-  SKY_COLOR_TOP,
   SPEED,
   SPRITE,
   UNITS_PER_METER,
@@ -25,12 +22,6 @@ interface Puddle {
   x: number;
   /** 被弾してからの経過秒。未被弾は -1 */
   hitAge: number;
-}
-
-interface Cloud {
-  x: number;
-  y: number;
-  s: number;
 }
 
 const lerp = (pair: readonly [number, number], t: number) => pair[0] + (pair[1] - pair[0]) * t;
@@ -47,7 +38,6 @@ export class Game {
   private cssH = 0;
   private scale = 1;
   private visW = 0;
-  private skyH = 0;
 
   private scroll = 0;
   private dist = 0;
@@ -55,7 +45,6 @@ export class Game {
   private speed = SPEED;
   private puddles: Puddle[] = [];
   private nextPuddleX = DIFFICULTY.firstPuddle;
-  private clouds: Cloud[] = [];
 
   private hits = 0;
   private invincible = 0;
@@ -74,7 +63,6 @@ export class Game {
     const ctx = canvas.getContext("2d");
     if (!ctx) throw new Error("Canvas 2D が使えません");
     this.ctx = ctx;
-    for (let i = 0; i < 7; i++) this.clouds.push({ x: rand(0, 2000), y: rand(0.1, 0.9), s: rand(0.7, 1.4) });
     this.resize();
     window.addEventListener("resize", () => this.resize());
   }
@@ -170,7 +158,6 @@ export class Game {
     this.updateJump(dt);
     if (this.mode === "playing") this.checkHits();
 
-    for (const c of this.clouds) c.x += dt * 12 * c.s;
   }
 
   /** タイトル背景のデモ: 水たまりが近づいたら自動でジャンプ */
@@ -223,7 +210,7 @@ export class Game {
   }
 
   private playerX(): number {
-    return this.visW * (this.portrait() ? 0.28 : 0.2);
+    return this.visW * (this.portrait() ? 0.18 : 0.2);
   }
 
   private resize(): void {
@@ -232,75 +219,26 @@ export class Game {
     this.cssH = window.innerHeight;
     this.canvas.width = Math.round(this.cssW * dpr);
     this.canvas.height = Math.round(this.cssH * dpr);
-    if (this.portrait()) {
-      // 縦長: 横幅を固定して背景は下寄せ、余った上側は空で埋める
-      this.scale = this.cssW / PORTRAIT_VIEW_W;
-      this.visW = PORTRAIT_VIEW_W;
-      this.skyH = Math.max(0, this.cssH / this.scale - BG_H);
-    } else {
-      // 横長: 高さを背景に合わせ、横は見えるだけ見せる
-      this.scale = this.cssH / BG_H;
-      this.visW = this.cssW / this.scale;
-      this.skyH = 0;
-    }
+    // 縦長・横長とも背景の高さに合わせる(横は画面幅に応じて見える範囲が変わる)
+    this.scale = this.cssH / BG_H;
+    this.visW = this.cssW / this.scale;
     const k = dpr * this.scale;
     this.ctx.setTransform(k, 0, 0, k, 0, 0);
     this.ctx.imageSmoothingQuality = "high";
   }
 
   private render(): void {
-    const ctx = this.ctx;
-    const visH = this.cssH / this.scale;
-    ctx.clearRect(0, 0, this.visW, visH);
-    ctx.save();
-    ctx.translate(0, this.skyH);
+    this.ctx.clearRect(0, 0, this.visW, BG_H);
     this.drawBackground();
-    ctx.restore();
-    ctx.save();
-    ctx.translate(0, this.skyH);
     this.drawActors();
-    ctx.restore();
   }
 
   private drawBackground(): void {
     const ctx = this.ctx;
-    if (this.skyH > 0) {
-      const g = ctx.createLinearGradient(0, -this.skyH, 0, 0);
-      g.addColorStop(0, SKY_COLOR_TOP);
-      g.addColorStop(1, SKY_COLOR);
-      ctx.fillStyle = g;
-      ctx.fillRect(0, -this.skyH - 2, this.visW, this.skyH + 4);
-      this.drawClouds();
-    }
     const first = Math.floor(this.scroll / BG_STRIP_W);
     for (let i = first, x = first * BG_STRIP_W - this.scroll; x < this.visW; i++, x += BG_STRIP_W) {
       // 1px 重ねて継ぎ目の隙間を防ぐ
       ctx.drawImage(this.assets.bg[((i % BG_COUNT) + BG_COUNT) % BG_COUNT], x, 0, BG_STRIP_W + 1, BG_H);
-    }
-    if (this.skyH > 0) {
-      // 画像上端と延長した空をなじませる
-      const g = ctx.createLinearGradient(0, 0, 0, 110);
-      g.addColorStop(0, SKY_COLOR);
-      g.addColorStop(1, "rgba(84,179,244,0)");
-      ctx.fillStyle = g;
-      ctx.fillRect(0, 0, this.visW, 110);
-    }
-  }
-
-  private drawClouds(): void {
-    const ctx = this.ctx;
-    ctx.fillStyle = "rgba(255,255,255,0.85)";
-    const span = this.visW + 500;
-    for (const c of this.clouds) {
-      const x = ((((c.x - this.scroll * 0.05) % span) + span) % span) - 250;
-      const y = -this.skyH + 40 + c.y * Math.max(0, this.skyH - 140);
-      const r = 34 * c.s;
-      ctx.beginPath();
-      ctx.arc(x, y, r, 0, Math.PI * 2);
-      ctx.arc(x + r * 1.1, y - r * 0.35, r * 1.2, 0, Math.PI * 2);
-      ctx.arc(x + r * 2.3, y, r * 0.95, 0, Math.PI * 2);
-      ctx.rect(x, y, r * 2.3, r * 0.95);
-      ctx.fill();
     }
   }
 
