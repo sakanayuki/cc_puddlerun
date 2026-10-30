@@ -7,6 +7,7 @@ import {
   GROUND_Y,
   INVINCIBLE_SEC,
   JUMP,
+  JUMP_ZONE,
   MAX_RENDER_SCALE,
   MAX_HITS,
   PLAYER,
@@ -218,8 +219,17 @@ export class Game {
   private resize(): void {
     this.cssW = window.innerWidth;
     this.cssH = window.innerHeight;
-    // 背景の高さに合わせる(縦長・横長とも。横は画面幅に応じて見える範囲が変わる)
-    this.scale = this.cssH / BG_H;
+    // 縦長は下部をジャンプボタン領域にして、ゲーム画面は上側に収める(指で水たまりが隠れないように)
+    const zone = this.portrait()
+      ? Math.round(Math.min(JUMP_ZONE.max, Math.max(JUMP_ZONE.min, this.cssH * JUMP_ZONE.ratio)))
+      : 0;
+    const playH = this.cssH - zone;
+    const root = document.documentElement;
+    root.style.setProperty("--zone-h", `${zone}px`);
+    root.classList.toggle("portrait", zone > 0);
+    this.canvas.style.height = `${playH}px`;
+    // 背景の高さに合わせる(横は画面幅に応じて見える範囲が変わる)
+    this.scale = playH / BG_H;
     this.visW = this.cssW / this.scale;
     // 素材は 1 ワールド単位 ≒ 1px なので、それ以上の内部解像度は描画コストが増えるだけ。
     // CSS で引き伸ばして表示する

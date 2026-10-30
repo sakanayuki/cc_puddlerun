@@ -73,6 +73,7 @@ async function main(): Promise<void> {
     show("result");
   };
 
+  const jumpBtn = $("jump-btn");
   const onTap = () => {
     switch (game.mode) {
       case "title":
@@ -80,6 +81,8 @@ async function main(): Promise<void> {
         break;
       case "playing":
         game.jump();
+        jumpBtn.classList.add("pressed");
+        window.setTimeout(() => jumpBtn.classList.remove("pressed"), 120);
         break;
       case "result":
         if (performance.now() >= tapLockedUntil) startGame();

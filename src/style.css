@@ -28,15 +28,71 @@ body {
 
 #stage {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
   width: 100%;
+  /* 高さは JS が設定する(縦長では下部のジャンプボタン領域を除いた高さ) */
   height: 100%;
   display: block;
 }
 
+/* 縦長のときだけ、画面下部にジャンプボタン領域を確保する。タップ自体は画面のどこでも効く */
+#jump-zone {
+  display: none;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--zone-h, 0px);
+  align-items: center;
+  justify-content: center;
+  padding-bottom: env(safe-area-inset-bottom);
+  background: linear-gradient(#7a4a26, #4a2a12);
+  border-top: 4px solid var(--brown);
+  pointer-events: none;
+}
+
+.portrait #jump-zone {
+  display: flex;
+}
+
+#jump-btn {
+  width: min(calc(var(--zone-h) * 0.62), 62vw);
+  height: min(calc(var(--zone-h) * 0.62), 62vw);
+  min-width: 96px;
+  min-height: 96px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 35% 30%, #ffb35c, var(--accent) 60%, #d4561a);
+  border: 5px solid var(--brown);
+  box-shadow:
+    0 8px 0 var(--brown),
+    inset 0 -6px 0 rgba(0, 0, 0, 0.15);
+  color: #fff;
+  font-size: clamp(16px, 4.2vmin, 24px);
+  line-height: 1.2;
+  -webkit-text-stroke: 0.14em var(--brown);
+  paint-order: stroke fill;
+  transition: transform 0.08s;
+}
+
+#jump-btn .arrow {
+  font-size: 1.5em;
+}
+
+#jump-btn.pressed {
+  transform: translateY(6px);
+  box-shadow:
+    0 2px 0 var(--brown),
+    inset 0 -6px 0 rgba(0, 0, 0, 0.15);
+}
+
 .screen {
   position: fixed;
-  inset: 0;
+  inset: 0 0 var(--zone-h, 0px) 0;
   display: none;
   flex-direction: column;
   align-items: center;
@@ -63,6 +119,7 @@ body {
 }
 
 #loading {
+  inset: 0;
   justify-content: center;
   background: #54b3f4;
   font-size: 20px;
