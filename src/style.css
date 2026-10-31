@@ -111,6 +111,7 @@ body {
 .panel,
 .tap,
 .best,
+.hint,
 .oops,
 #loading p {
   -webkit-text-stroke: 0.14em var(--brown);
@@ -191,6 +192,14 @@ body {
   50% {
     transform: rotate(-4deg) translateY(-8px);
   }
+}
+
+.hint {
+  margin: 1.4em 0 0;
+  font-size: clamp(11px, 2.6vmin, 15px);
+  color: #fff;
+  opacity: 0.9;
+  padding: 0 12px;
 }
 
 /* ---- HUD ---- */

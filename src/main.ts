@@ -10,6 +10,11 @@ const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as 
 /** 泣きアニメ直後の誤タップでリザルトが飛ばないようにする時間(ms) */
 const RESULT_LOCK_MS = 800;
 
+/** タップ扱いにしないキー(戻る・ブラウザ操作用) */
+const IGNORED_KEYS = new Set(["Escape", "Tab", "GoBack", "BrowserBack", "Backspace", "F5", "F11", "F12"]);
+/** Android TV のリモコンの戻るボタン(keyCode 4)など */
+const IGNORED_KEY_CODES = new Set([4, 27, 8]);
+
 const screens = {
   loading: $("loading"),
   title: $("title"),
@@ -99,16 +104,29 @@ async function main(): Promise<void> {
     },
     { passive: false },
   );
+  // TV のリモコンはカーソル(ポインター)ではなくキー入力で届くことがあるため、
+  // 戻る・修飾キー以外のキーはすべてタップ扱いにする(OK/決定、方向キー、再生ボタンなど)
   window.addEventListener("keydown", (e) => {
-    if (e.repeat || !["Space", "Enter", "ArrowUp"].includes(e.code)) return;
+    if (e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (IGNORED_KEYS.has(e.key) || IGNORED_KEY_CODES.has(e.keyCode)) return;
     e.preventDefault();
     onTap();
   });
   window.addEventListener("contextmenu", (e) => e.preventDefault());
 
+  // ゲームパッド: どれかのボタンを押した瞬間をタップ扱いにする
+  let padHeld = false;
+  const pollGamepad = () => {
+    const pads = navigator.getGamepads?.() ?? [];
+    const pressed = pads.some((pad) => pad?.buttons.some((b) => b.pressed));
+    if (pressed && !padHeld) onTap();
+    padHeld = pressed;
+  };
+
   let meterShown = -1;
   let last = performance.now();
   const loop = (now: number) => {
+    pollGamepad();
     game.frame((now - last) / 1000);
     last = now;
     if (game.mode === "playing" && game.meters !== meterShown) {
